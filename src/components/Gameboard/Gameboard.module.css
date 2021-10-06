@@ -1,0 +1,10 @@
+.board-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    height: 500px;
+    width: 500px;
+}
+
+

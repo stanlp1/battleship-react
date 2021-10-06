@@ -1,0 +1,15 @@
+.tile {
+    outline: 2px solid;
+}
+
+.tile-hover {
+    background-color : darkgray;
+}
+
+.tile-occupied {
+    background-color: gray;
+}
+
+.tile-hidden-free {
+    background-color: aqua;
+}
