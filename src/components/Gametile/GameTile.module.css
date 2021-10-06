@@ -13,3 +13,11 @@
 .tile-hidden-free {
     background-color: aqua;
 }
+
+.tile-hit {
+    background-color: red;
+}
+
+.tile-revealed {
+    background-color:azure;
+}

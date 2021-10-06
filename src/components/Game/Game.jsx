@@ -6,8 +6,8 @@ const Game = () => {
 
     return (
         <div className={Styles['gameboard-container']}>
-            <Gameboard boardNum="board1"></Gameboard>
-            <Gameboard boardNum="board2"></Gameboard>
+            <Gameboard playerID="player1" boardNum="board1"></Gameboard>
+            <Gameboard playerID="player2" type="computer" boardNum="board2"></Gameboard>
         </div>
     )
 }
