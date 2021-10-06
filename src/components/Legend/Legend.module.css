@@ -1,0 +1,21 @@
+.legend-container {
+    width: 15%;
+    height: 30%;
+    align-self: center;
+}
+
+.legend-tile {
+    height: 20px;
+    width: 20px;
+}
+
+.legend-text {
+    margin-left: 10%;
+    font-size: 20px;
+}
+
+.legend-entry {
+    display:flex;
+    align-items :center;
+    margin-bottom: 30px;
+}

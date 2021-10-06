@@ -1,0 +1,19 @@
+.game-status {
+    align-self: center;
+    text-align: center;
+    white-space: pre-line;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.status-contaienr {
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+}
+
+.reset-button {
+    width: 40%;
+    align-self: center;
+}

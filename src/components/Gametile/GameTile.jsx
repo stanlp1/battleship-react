@@ -3,7 +3,7 @@ import Styles from "./GameTile.module.css"
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { boardEmptyAtPos, checkVictory } from "../Gameboard/Gameboard";
-import { playerStates } from "../../reducers/player";
+import { playerStates } from "../../reducers/players";
 import { store } from "../..";
 
 
@@ -15,20 +15,23 @@ export const tileStates = {
     hovered: "H",
     hit: "X",
 }
-const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, type}) => {
+
+const styleMap = {
+    [tileStates.occupied]: Styles['tile-occupied'],
+    [tileStates.hidden]: Styles['tile-hidden-free'],
+    [tileStates.hovered]: Styles['tile-hover'],
+    [tileStates.hit]: Styles['tile-hit'],
+    [tileStates.revealed]: Styles['tile-revealed'],
+}
+
+const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, type, oppType}) => {
     const tileVal = useSelector((state) => state.boards[boardNum][tileIndex]);
 
     const dispatch = useDispatch();
     // console.log(typeof(tileVal));
     // console.log("Rendering tile" + tileIndex);
 
-    const styleMap = {
-        [tileStates.occupied]: Styles['tile-occupied'],
-        [tileStates.hidden]: Styles['tile-hidden-free'],
-        [tileStates.hovered]: Styles['tile-hover'],
-        [tileStates.hit]: Styles['tile-hit'],
-        [tileStates.revealed]: Styles['tile-revealed'],
-    }
+
 
     const attackOpponent = () => {
         let state = store.getState();
@@ -41,9 +44,10 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
         state = store.getState();
         if (checkVictory(state.boards[opp]))
         {
-            alert("player won");
-            dispatch({type:"RESET_GAME"});
+            dispatch({type:"GAME_OVER", payload: {player:opp}});
+            //dispatch({type:"RESET_GAME"});
         }
+        dispatch({type:"SWAP_TURNS"});
     }
     const handleClick = (e)=> {
         let state = store.getState();
@@ -66,18 +70,22 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
                 break;
             }
             case playerStates.ISDEFENDING: {
-                if (tileVal === tileStates.revealed || tileVal === tileStates.hit)
+                if (tileVal === tileStates.revealed || tileVal === tileStates.hit || oppType === 'computer')
                     return;
 
                 dispatch({type: "REVEAL_TILE", payload: {board: boardNum, index: tileIndex}});
                 let state = store.getState()
                 if (checkVictory(state.boards[boardNum]))
                 {
-                    alert("Game Won");
-                    dispatch({type:"RESET_GAME"});
+                    dispatch({type:"GAME_OVER", payload: {player:player}});
+                    //dispatch({type:"RESET_GAME"});
                 }
-                else if (type === "computer")
-                    attackOpponent();
+                else 
+                {
+                    dispatch({type:"SWAP_TURNS"});
+                    if (type === "computer")
+                        setTimeout(attackOpponent, 1000);
+                }
                 break;
             }
             default:

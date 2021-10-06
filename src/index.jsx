@@ -5,8 +5,8 @@ import App from './App';
 import { Provider } from 'react-redux';
 import reportWebVitals from './reportWebVitals';
 import { combineReducers, createStore } from 'redux';
-import boards from './reducers/board';
-import players from './reducers/player';
+import boards from './reducers/boards';
+import players from './reducers/players';
 const reducer = combineReducers({boards, players})
 export const store = createStore(reducer, undefined, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
