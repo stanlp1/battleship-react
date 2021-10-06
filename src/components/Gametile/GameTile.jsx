@@ -128,11 +128,11 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
 
     if (hidden === true && tileVal !== tileStates.revealed && tileVal !== tileStates.hit)
         return (
-            <div className={`${Styles.tile} ${styleMap[tileStates.hidden]}`} onContextMenu={handleRotate} onMouseLeave={handleMouseLeave} onMouseOver={handleMouseOver} onClick= {handleClick} id ={`${tileIndex}`} style={{width: `${100/boardSize}%`, height:`${100/boardSize}%`}}>{tileVal}</div>
+            <div className={`${Styles.tile} ${styleMap[tileStates.hidden]}`} onContextMenu={handleRotate} onMouseLeave={handleMouseLeave} onMouseOver={handleMouseOver} onClick= {handleClick} id ={`${tileIndex}`} style={{width: `${100/boardSize}%`, height:`${100/boardSize}%`}}></div>
         )
 
     return (
-        <div className={`${Styles.tile} ${styleMap[tileVal]}`} onContextMenu={handleRotate} onMouseLeave={handleMouseLeave} onMouseOver={handleMouseOver} onClick= {handleClick} id ={`${tileIndex}`} style={{width: `${100/boardSize}%`, height:`${100/boardSize}%`}}>{tileVal}</div>
+        <div className={`${Styles.tile} ${styleMap[tileVal]}`} onContextMenu={handleRotate} onMouseLeave={handleMouseLeave} onMouseOver={handleMouseOver} onClick= {handleClick} id ={`${tileIndex}`} style={{width: `${100/boardSize}%`, height:`${100/boardSize}%`}}></div>
     )
 }
 
