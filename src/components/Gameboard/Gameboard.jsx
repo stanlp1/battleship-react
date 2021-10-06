@@ -11,6 +11,7 @@ export const boardEmptyAtPos = (index, dir, length, board) => {
     return true;
 }
 
+
 const Gameboard = ({playerID, boardNum}) => {
     const dispatch = useDispatch();
     const board = useSelector((state) => Array.from(state.boards[boardNum].keys()), shallowEqual);
@@ -21,16 +22,9 @@ const Gameboard = ({playerID, boardNum}) => {
         dispatch({type: "CHANGE_SIZE", payload:{size:size+2}});
     }
 
-    const handleKeyPress = (event) => {
-        if (event.code === "KeyR")
-        {
-            console.log("Dispatching")
-            dispatch({type: "TOGGLE_DIR"});
-        }
-    }
     return (
         <>
-            <div tabIndex="0" onKeyDown={handleKeyPress} className={Styles['board-container']}>
+            <div className={Styles['board-container']}>
                 {board.map( (index) => <GameTile boardSize={size} boardNum={boardNum} tileIndex={index} key={index}></GameTile>)}
             </div>
         </>
