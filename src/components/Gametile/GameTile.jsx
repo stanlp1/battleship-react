@@ -44,10 +44,14 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
         state = store.getState();
         if (checkVictory(state.boards[opp]))
         {
-            dispatch({type:"GAME_OVER", payload: {player:opp}});
+            let lostPlayer = player === "player1" ? "player2" : "player1";
+            dispatch({type:"GAME_OVER", payload: {player:lostPlayer}});
             //dispatch({type:"RESET_GAME"});
         }
-        dispatch({type:"SWAP_TURNS"});
+        else
+        {
+            dispatch({type:"SWAP_TURNS"});
+        }
     }
     const handleClick = (e)=> {
         let state = store.getState();
@@ -84,7 +88,7 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
                 {
                     dispatch({type:"SWAP_TURNS"});
                     if (type === "computer")
-                        setTimeout(attackOpponent, 1000);
+                        setTimeout(attackOpponent, 50);
                 }
                 break;
             }
