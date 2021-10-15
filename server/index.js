@@ -68,6 +68,27 @@ let newGameEvent = () => {
 wss.on('connection', function connection(ws) {
     ws.id = getUniqueID();
     console.log(ws.id);
+
+    ws.on('close', function incoming(data)
+    {
+        if (ws.room !== undefined)
+        {
+            let room = rooms.get(ws.room);
+            if (room !== undefined)
+            {
+                room.curPlayers--;
+                if (room.curPlayers === 0)
+                {
+                    rooms.delete(ws.room);
+                }
+                else
+                {
+                    room.pid.splice(room.pid.indexOf(ws.id),1);
+                }
+            }
+        }
+        ws.close();
+    })
     ws.on('message', function incoming(data) {
         let jsonData = JSON.parse(data);
         let event = jsonData.event;
