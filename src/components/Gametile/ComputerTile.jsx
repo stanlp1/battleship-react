@@ -6,7 +6,7 @@ import { playerStates } from "../../reducers/players.jsx";
 import { store } from "../..";
 import { modes } from "../../reducers/game";
 
-let ComputerTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, type, oppType}) => {
+let ComputerTile = ({socket, tileIndex, boardNum, boardSize, player, playerState, hidden, type, oppType}) => {
     const tileVal = useSelector((state) => state.boards[boardNum][tileIndex]);
     const dispatch = useDispatch();
 
@@ -23,7 +23,7 @@ let ComputerTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden
         {
             let lostPlayer = player === "player1" ? "player2" : "player1";
             dispatch({type:"GAME_OVER", payload: {player:lostPlayer}});
-            //dispatch({type:"RESET_GAME"});
+            dispatch({type: "REVEAL_BOARD", payload: {board: boardNum}}); // reveal board when win
         }
         else
         {
@@ -39,11 +39,22 @@ let ComputerTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden
                     return;
 
                 dispatch({type: "REVEAL_TILE", payload: {board: boardNum, index: tileIndex}});
+                if (type === modes.ONLINE)
+                {
+                    socket.current.send(JSON.stringify(
+                        {
+                            "event": 2,
+                            "payload": {
+                                "index": tileIndex
+                            }
+                        }
+                    ));
+                }
                 let state = store.getState()
                 if (checkVictory(state.boards[boardNum]))
                 {
                     dispatch({type:"GAME_OVER", payload: {player:player}});
-                    //dispatch({type:"RESET_GAME"});
+                    dispatch({type: "REVEAL_BOARD", payload: {board: boardNum}}); // reveal board when win
                 }
                 else 
                 {

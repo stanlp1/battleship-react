@@ -101,6 +101,18 @@ let boards = (state = defaultState, action) => {
                 [action.payload.board+'Hidden']: state[action.payload.board+'Hidden'] === true ? false : true,
             }
         }
+        case 'HIDE_BOARD': {
+            return {
+                ...state,
+                [action.payload.board+'Hidden']: true
+            }
+        }
+        case 'REVEAL_BOARD': {
+            return {
+                ...state,
+                [action.payload.board+'Hidden']: false
+            }
+        }
         case 'PLACE_RANDOM': {
             let newBoard = [...state[action.payload.board]];
             let shipIndex = state[action.payload.board+'ShipIndex'];

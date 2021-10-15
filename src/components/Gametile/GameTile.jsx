@@ -66,7 +66,7 @@ const GameTile = ({socket, tileIndex, boardNum, boardSize, player, playerState, 
                 break;
             }
             case playerStates.ISDEFENDING: {
-                if (tileVal === tileStates.revealed || tileVal === tileStates.hit || oppType === 'computer')
+                if (tileVal === tileStates.revealed || tileVal === tileStates.hit || oppType !== modes.LOCAL)
                     return;
 
                 dispatch({type: "REVEAL_TILE", payload: {board: boardNum, index: tileIndex}});
@@ -74,7 +74,7 @@ const GameTile = ({socket, tileIndex, boardNum, boardSize, player, playerState, 
                 if (checkVictory(state.boards[boardNum]))
                 {
                     dispatch({type:"GAME_OVER", payload: {player:player}});
-                    //dispatch({type:"RESET_GAME"});
+                    dispatch({type: "REVEAL_BOARD", payload: {board: "board2"}}); // reveal board when win
                 }
                 else 
                 {

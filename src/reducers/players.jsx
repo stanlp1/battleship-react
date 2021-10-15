@@ -19,8 +19,8 @@ let defaultState = {
     gameStatus : gameStatusStates.PLACING_SHIPS,
     player1Score: 0,
     player2Score: 0,
+    playerNum: 1,
 }
-
 
 
 
@@ -31,12 +31,17 @@ let players = (state = defaultState, action) => {
                 ...state,
                 [action.payload.player]: action.payload.state,
             }
+        case 'SET_ONLINE_PLAYER_NUM':
+            return {
+                ...state,
+                playerNum: action.payload.player,
+            }
         case 'START_GAME':
             return {
                 ...state,
-                player1: playerStates.ISATTACKING,
-                player2: playerStates.ISDEFENDING,
-                gameStatus: gameStatusStates.PLAYER1TURN,
+                player1: state.playerNum === 1 ? playerStates.ISATTACKING : playerStates.ISDEFENDING,
+                player2: state.playerNum === 1 ? playerStates.ISDEFENDING : playerStates.ISATTACKING,
+                gameStatus: gameStatusStates["PLAYER"+state.playerNum.toString()+"TURN"]
             }
         case 'SWAP_TURNS':
             return {

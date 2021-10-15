@@ -7,6 +7,8 @@ import ModeSelect from "../ModeSelect/ModeSelect";
 import { playerStates } from "../../reducers/players";
 import { tileStates } from "../Gametile/GameTile";
 import { store } from "../..";
+import { checkVictory } from "../Gameboard/Gameboard";
+
 const Body = () => {
     const gameState = useSelector(state=> state.game.state);
     const socket = useRef(null);
@@ -30,8 +32,14 @@ const Body = () => {
             
                 switch (data.event)
                 {
-            
-                    case 1:
+                    case 'ROOM_JOIN_SUCCESS':
+                    {
+
+                        store.dispatch({type: "SET_ONLINE_PLAYER_NUM", payload: { player: data.payload.player }});
+                        console.log("SET ROOM");
+                        break;
+                    }
+                    case 1: // oppponent ship place event
                     {
                         console.log("Reached");
                         store.dispatch({type: "CHANGE_ADJ_TILES", payload: {dir: data.dir, index: data.index, length: data.length, tileContent:tileStates.occupied, board: "board2", isPlacing: true}});
@@ -46,6 +54,27 @@ const Body = () => {
                             }
                         }
                         break;
+                    }
+                    case 2: // oppoonent attack event
+                    {
+                        console.log("Received Attack");
+                        store.dispatch({type: "REVEAL_TILE", payload: {board: "board1", index: data.index}});
+                        let state = store.getState()
+                        if (checkVictory(state.boards["board1"]))
+                        {
+                            store.dispatch({type:"GAME_OVER", payload: {player:"player1"}});
+                            store.dispatch({type: "REVEAL_BOARD", payload: {board: "board2"}}); // reveal board when victory
+                        }
+                        else 
+                        {
+                            store.dispatch({type:"SWAP_TURNS"});
+                        }
+                        break;
+                    }
+                    case 3: // new game event
+                    {
+                        console.log("Received New Game Event");
+                        store.dispatch({type:"RESET_GAME"});
                     }
             
                     default:

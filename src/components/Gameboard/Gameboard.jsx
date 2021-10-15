@@ -34,15 +34,18 @@ const Gameboard = ({socket, playerID, boardNum, type, oppType}) => {
         if (type === modes.COMPUTER && playerState === playerStates.PLACING)
         {
             dispatch({type: "PLACE_RANDOM", payload: {board: boardNum, player: playerID}});
-            dispatch({type: "TOGGLE_BOARD_VIS", payload: {board: boardNum}});
             dispatch({type: "CHANGE_PLAYER_STATE", payload: {player: playerID, state:playerStates.DONE_PLACING}});
+        }
+        if (type !== modes.LOCAL && playerState === playerStates.PLACING)
+        {
+            dispatch({type: "HIDE_BOARD", payload: {board: boardNum}});
         }
     },[playerState])
 
     let renderTiles = () => {
         if (type === modes.COMPUTER || type === modes.ONLINE)
         {
-            return board.map( (index) => <ComputerTile oppType={oppType} type={type} hidden={hidden} player={playerID} playerState={playerState} boardSize={size} boardNum={boardNum} tileIndex={index} key={index}></ComputerTile>);
+            return board.map( (index) => <ComputerTile socket={socket} oppType={oppType} type={type} hidden={hidden} player={playerID} playerState={playerState} boardSize={size} boardNum={boardNum} tileIndex={index} key={index}></ComputerTile>);
         }
         else{
             return board.map( (index) => <GameTile socket={socket} oppType={oppType} type={type} hidden={hidden} player={playerID} playerState={playerState} boardSize={size} boardNum={boardNum} tileIndex={index} key={index}></GameTile>);

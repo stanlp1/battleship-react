@@ -13,7 +13,7 @@ const Game = ({socket}) => {
     return (
         <div className={Styles['gameboard-container']}>
             <Gameboard socket={socket} playerID="player1" boardNum="board1" type={modes.LOCAL} oppType={mode}></Gameboard>
-            <Legend></Legend>
+            <Legend socket = {socket} ></Legend>
             <Gameboard socket={socket} playerID="player2" oppType={modes.LOCAL} type={mode} boardNum="board2"></Gameboard>
         </div>
     )

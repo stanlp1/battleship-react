@@ -3,7 +3,7 @@ import Gamestatus from "../Gamestatus/Gamestatus";
 import tileStyles from "../Gametile/GameTile.module.css";
 import Styles from "./Legend.module.css";
 
-const Legend = () => {
+const Legend = ({socket}) => {
 
     return (
         <div className={Styles['legend-container']}>
@@ -19,7 +19,7 @@ const Legend = () => {
                 <div className={`${Styles['legend-tile']} ${tileStyles.tile} ${tileStyles['tile-hit']}`} id='legend'></div>
                 <span className={Styles['legend-text']}>Hit</span>
             </div>  
-            <Gamestatus></Gamestatus>
+            <Gamestatus socket={socket}></Gamestatus>
         </div>
     )
 }

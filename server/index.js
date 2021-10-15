@@ -19,12 +19,15 @@ let getUniqueID = () => {
 let userEvents = {
     JOIN_ROOM: 0,
     PLACE_SHIP: 1,
-    MAKE_MOVE: 2,
+    ATTACK_OPPONENT: 2,
     GAME_OVER: 3,
+    NEW_GAME: 4,
 }
 
 let clientEvents = {
     OPP_PLACED_SHIP: 1,
+    OPPONENT_ATTACK: 2,
+    NEW_GAME_EVENT: 3,
 }
 
 
@@ -37,6 +40,14 @@ let newShipEvent = (index, length, dir) =>
         dir
     };
 }
+
+let newAttackEvent = (index) => 
+{
+    return {
+        event: clientEvents.OPPONENT_ATTACK,
+        index
+    }
+}
 let sendToClient = (clientId, data) =>
 {
     wss.clients.forEach((ws) => {
@@ -47,6 +58,12 @@ let sendToClient = (clientId, data) =>
                 ws.send(JSON.stringify(data));
         }
     })
+}
+
+let newGameEvent = () => {
+    return {
+        event: clientEvents.NEW_GAME_EVENT,
+    }
 }
 wss.on('connection', function connection(ws) {
     ws.id = getUniqueID();
@@ -69,8 +86,18 @@ wss.on('connection', function connection(ws) {
                         room.pid.push(ws.id);
                         if (room.curPlayers === 2)
                         {
-                            sendToClient(room.pid[0], "success");
-                            ws.send("success");
+                            sendToClient(room.pid[0], JSON.stringify({
+                                "event": "ROOM_JOIN_SUCCESS",
+                                "payload": {
+                                    "player": 1,
+                                }
+                            }));
+                            ws.send(JSON.stringify({
+                                "event": "ROOM_JOIN_SUCCESS",
+                                "payload": {
+                                    "player": 2,
+                                }
+                            }));
                             ws.room = payload.ROOM_NAME;
                         }
                     }
@@ -87,8 +114,19 @@ wss.on('connection', function connection(ws) {
             case userEvents.PLACE_SHIP:
             {
                 let oppid = rooms.get(ws.room).pid.find(id => id !== ws.id); // get opponent id
-                console.log(oppid);
                 sendToClient(oppid, newShipEvent(payload.PLACED_SHIPS.index, payload.PLACED_SHIPS.length, payload.PLACED_SHIPS.dir));
+                break;
+            }
+            case userEvents.ATTACK_OPPONENT:
+            {
+                let oppid = rooms.get(ws.room).pid.find(id => id !== ws.id);
+                sendToClient(oppid, newAttackEvent(payload.index));
+                break;
+            }
+            case userEvents.NEW_GAME:
+            {
+                let oppid = rooms.get(ws.room).pid.find(id => id !== ws.id);
+                sendToClient(oppid, newGameEvent());
                 break;
             }
             default:
