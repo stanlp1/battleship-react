@@ -23,6 +23,20 @@ let userEvents = {
     GAME_OVER: 3,
 }
 
+let clientEvents = {
+    OPP_PLACED_SHIP: 1,
+}
+
+
+let newShipEvent = (index, length, dir) =>
+{
+    return {
+        event: clientEvents.OPP_PLACED_SHIP,
+        index,
+        length,
+        dir
+    };
+}
 let sendToClient = (clientId, data) =>
 {
     wss.clients.forEach((ws) => {
@@ -56,6 +70,7 @@ wss.on('connection', function connection(ws) {
                         {
                             sendToClient(room.pid[0], "success");
                             ws.send("success");
+                            ws.room = payload.ROOM_NAME;
                         }
                     }
                 }
@@ -64,7 +79,14 @@ wss.on('connection', function connection(ws) {
                         curPlayers: 1,
                         pid: [ws.id]
                     });
+                    ws.room = payload.ROOM_NAME;
                 }
+                break;
+            }
+            case userEvents.PLACE_SHIP:
+            {
+                let oppid = rooms.get(payload.ROOM_NAME).pid.find(id => id !== ws.id); // get opponent id
+                sendToClient(oppid, newShipEvent(payload.PLACED_SHIPS.index, payload.PLACED_SHIPS.length, payload.PLACED_SHIPS.dir));
                 break;
             }
             default:
