@@ -7,7 +7,8 @@ import reportWebVitals from './reportWebVitals';
 import { combineReducers, createStore } from 'redux';
 import boards from './reducers/boards';
 import players from './reducers/players';
-const reducer = combineReducers({boards, players})
+import game from './reducers/game';
+const reducer = combineReducers({game, boards, players})
 export const store = createStore(reducer, undefined, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 console.log(store.getState());

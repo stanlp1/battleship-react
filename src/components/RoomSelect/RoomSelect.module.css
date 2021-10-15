@@ -1,0 +1,24 @@
+.title-text {
+    text-align:center;
+}
+
+.room-input {
+    height: 50px;
+    width: 20%;
+    text-align:center;
+    align-self: center;
+    font-size: 30px;
+
+}
+
+.room-button {
+    margin-top: 30px;
+    width: 10%;
+    font-size: 30px;
+    align-self:center;
+}
+
+.input-container {
+    display:flex;
+    flex-direction: column;
+}

@@ -1,0 +1,11 @@
+.mode-container {
+    display:flex;
+    flex-direction: column;
+}
+
+.mode-button {
+    margin-bottom: 20px;
+    width: 10%;
+    font-size:30px;
+    align-self: center;
+}

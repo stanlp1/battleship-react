@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { boardEmptyAtPos, checkVictory } from "../Gameboard/Gameboard";
 import { playerStates } from "../../reducers/players";
 import { store } from "../..";
-
+import { modes } from "../../reducers/game";
 
 
 export const tileStates = {
@@ -16,7 +16,7 @@ export const tileStates = {
     hit: "X",
 }
 
-const styleMap = {
+export const styleMap = {
     [tileStates.occupied]: Styles['tile-occupied'],
     [tileStates.hidden]: Styles['tile-hidden-free'],
     [tileStates.hovered]: Styles['tile-hover'],
@@ -24,35 +24,11 @@ const styleMap = {
     [tileStates.revealed]: Styles['tile-revealed'],
 }
 
-const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, type, oppType}) => {
+const GameTile = ({socket, tileIndex, boardNum, boardSize, player, playerState, hidden, type, oppType}) => {
     const tileVal = useSelector((state) => state.boards[boardNum][tileIndex]);
 
     const dispatch = useDispatch();
-    // console.log(typeof(tileVal));
-    // console.log("Rendering tile" + tileIndex);
 
-
-
-    const attackOpponent = () => {
-        let state = store.getState();
-        let opp = boardNum === "board1" ? "board2" : "board1";
-        let oppBoard = state.boards[opp];
-        let availMoves = oppBoard.map((val,ind) => (val === tileStates.hidden || val === tileStates.occupied) ? ind : -1);
-        availMoves = availMoves.filter((val) => val !== -1);
-        let randIndex = Math.floor(Math.random() * availMoves.length);
-        dispatch({type: "REVEAL_TILE", payload: {board: opp, index: availMoves[randIndex]}});
-        state = store.getState();
-        if (checkVictory(state.boards[opp]))
-        {
-            let lostPlayer = player === "player1" ? "player2" : "player1";
-            dispatch({type:"GAME_OVER", payload: {player:lostPlayer}});
-            //dispatch({type:"RESET_GAME"});
-        }
-        else
-        {
-            dispatch({type:"SWAP_TURNS"});
-        }
-    }
     const handleClick = (e)=> {
         let state = store.getState();
         switch (playerState) {
@@ -60,7 +36,23 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
                 let shipIndex = state.boards[boardNum+"ShipIndex"];
                 let shipLength = state.boards.shipArray[shipIndex].length
                 if (boardEmptyAtPos(tileIndex, state.boards.shipDir, shipLength, state.boards[boardNum]))
-                    dispatch({type: "CHANGE_ADJ_TILES", payload: {index: tileIndex, length: shipLength, tileContent:tileStates.occupied, board: boardNum, isPlacing: true}});
+                {
+                    dispatch({type: "CHANGE_ADJ_TILES", payload: {dir: state.boards.shipDir, index: tileIndex, length: shipLength, tileContent:tileStates.occupied, board: boardNum, isPlacing: true}});
+                    if (oppType === modes.ONLINE)
+                    {
+                        socket.current.send(JSON.stringify({
+                            "event": 1,
+                            "payload": {
+                                "ROOM_NAME": "test",
+                                "PLACED_SHIPS": {
+                                    "index": tileIndex,
+                                    "dir": state.boards.shipDir,
+                                    "length": shipLength
+                                }
+                            }
+                        }));
+                    }
+                }
                 state = store.getState();
                 if (state.boards[boardNum+"ShipIndex"] >= state.boards.shipArray.length)
                 {
@@ -87,8 +79,6 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
                 else 
                 {
                     dispatch({type:"SWAP_TURNS"});
-                    if (type === "computer")
-                        setTimeout(attackOpponent, 50);
                 }
                 break;
             }
@@ -103,7 +93,7 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
                 let shipIndex = state.boards[boardNum+"ShipIndex"];
                 let shipLength = state.boards.shipArray[shipIndex].length
                 if (boardEmptyAtPos(tileIndex, state.boards.shipDir, shipLength, state.boards[boardNum]))
-                    dispatch({type: "CHANGE_ADJ_TILES", payload: {index: tileIndex, length: shipLength, tileContent: tileStates.hovered, board: boardNum, isPlacing: false}});
+                    dispatch({type: "CHANGE_ADJ_TILES", payload: {dir: state.boards.shipDir, index: tileIndex, length: shipLength, tileContent: tileStates.hovered, board: boardNum, isPlacing: false}});
                 break;
             default:
                 return;
@@ -116,7 +106,7 @@ const GameTile = ({tileIndex, boardNum, boardSize, player, playerState, hidden, 
                 let shipIndex = state.boards[boardNum+"ShipIndex"];
                 let shipLength = state.boards.shipArray[shipIndex].length
                 if (boardEmptyAtPos(tileIndex, state.boards.shipDir, shipLength, state.boards[boardNum]))
-                    dispatch({type: "CHANGE_ADJ_TILES", payload: {index: tileIndex, length: shipLength, tileContent: tileStates.hidden, board: boardNum, isPlacing: false}});
+                    dispatch({type: "CHANGE_ADJ_TILES", payload: {dir: state.boards.shipDir, index: tileIndex, length: shipLength, tileContent: tileStates.hidden, board: boardNum, isPlacing: false}});
                 break;
             default:
                 return;

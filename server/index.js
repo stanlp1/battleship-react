@@ -50,6 +50,7 @@ let sendToClient = (clientId, data) =>
 }
 wss.on('connection', function connection(ws) {
     ws.id = getUniqueID();
+    console.log(ws.id);
     ws.on('message', function incoming(data) {
         let jsonData = JSON.parse(data);
         let event = jsonData.event;
@@ -85,7 +86,8 @@ wss.on('connection', function connection(ws) {
             }
             case userEvents.PLACE_SHIP:
             {
-                let oppid = rooms.get(payload.ROOM_NAME).pid.find(id => id !== ws.id); // get opponent id
+                let oppid = rooms.get(ws.room).pid.find(id => id !== ws.id); // get opponent id
+                console.log(oppid);
                 sendToClient(oppid, newShipEvent(payload.PLACED_SHIPS.index, payload.PLACED_SHIPS.length, payload.PLACED_SHIPS.dir));
                 break;
             }

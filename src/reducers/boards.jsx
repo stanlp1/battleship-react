@@ -50,7 +50,7 @@ let boards = (state = defaultState, action) => {
         case 'CHANGE_ADJ_TILES': {
 
             // boundary checking
-            let dir = state.shipDir;
+            let dir = action.payload.dir
             let row1 = parseInt((action.payload.index) / state.boardSize);
             let row2 = parseInt(((action.payload.index) + (dir * (action.payload.length - 1) )) / state.boardSize);
 
